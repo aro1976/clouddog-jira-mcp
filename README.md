@@ -80,7 +80,9 @@ Adicione ao `~/.kiro/settings/mcp.json`:
 | Tool | Descrição | Auto-approve |
 |---|---|---|
 | `get_comments` | Listar comentários de uma issue | ✅ |
-| `add_comment` | Adicionar comentário | |
+| `add_comment` | Adicionar comentário (API v3) | |
+| `add_internal_comment` | Comentário interno via Service Desk API (visível só para agentes) | |
+| `add_external_comment` | Comentário público via Service Desk API (visível para clientes) | |
 
 ### Worklogs
 | Tool | Descrição | Auto-approve |

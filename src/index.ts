@@ -248,6 +248,11 @@ server.tool(
           version: 1,
           content: [{ type: "paragraph", content: [{ type: "text", text: commentBody }] }],
         },
+        visibility: {
+          type: "role",
+          value: "Member",
+          identifier: "Member",
+        },
       }),
     });
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
@@ -332,6 +337,52 @@ server.tool(
   async ({ issueIdOrKey, worklogId }) => {
     await jiraRequest(`/issue/${issueIdOrKey}/worklog/${worklogId}`, { method: "DELETE" });
     return { content: [{ type: "text", text: `Worklog ${worklogId} deleted from ${issueIdOrKey}.` }] };
+  }
+);
+
+// ── Service Desk Comments ──
+
+server.tool(
+  "add_internal_comment",
+  "Add an internal comment to a Service Desk issue (visible to agents only)",
+  { issueIdOrKey: z.string(), body: z.string() },
+  async ({ issueIdOrKey, body: commentBody }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/request/${issueIdOrKey}/comment`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ body: commentBody, public: false }),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    const data = text ? JSON.parse(text) : null;
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "add_external_comment",
+  "Add a public comment to a Service Desk issue (visible to customers)",
+  { issueIdOrKey: z.string(), body: z.string() },
+  async ({ issueIdOrKey, body: commentBody }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/request/${issueIdOrKey}/comment`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ body: commentBody, public: true }),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    const data = text ? JSON.parse(text) : null;
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   }
 );
 
