@@ -335,6 +335,67 @@ server.tool(
   }
 );
 
+// ── Issue Links ──
+
+server.tool(
+  "get_issue_link_types",
+  "List all available issue link types (e.g. Blocks, Relates, Duplicate)",
+  {},
+  async () => {
+    const data = await jiraRequest("/issueLinkType");
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "link_issues",
+  "Create a link between two issues",
+  {
+    linkTypeName: z.string().describe("Link type name, e.g. 'Blocks', 'Relates', 'Duplicate'"),
+    inwardIssueKey: z.string().describe("Key of the inward issue (e.g. PROJ-1)"),
+    outwardIssueKey: z.string().describe("Key of the outward issue (e.g. PROJ-2)"),
+    comment: z.string().optional().describe("Optional comment to add to the inward issue"),
+  },
+  async ({ linkTypeName, inwardIssueKey, outwardIssueKey, comment }) => {
+    const body: Record<string, unknown> = {
+      type: { name: linkTypeName },
+      inwardIssue: { key: inwardIssueKey },
+      outwardIssue: { key: outwardIssueKey },
+    };
+    if (comment) {
+      body.comment = {
+        body: {
+          type: "doc",
+          version: 1,
+          content: [{ type: "paragraph", content: [{ type: "text", text: comment }] }],
+        },
+      };
+    }
+    await jiraRequest("/issueLink", { method: "POST", body: JSON.stringify(body) });
+    return { content: [{ type: "text", text: `Link '${linkTypeName}' created between ${inwardIssueKey} and ${outwardIssueKey}.` }] };
+  }
+);
+
+server.tool(
+  "get_issue_link",
+  "Get an issue link by ID",
+  { linkId: z.string() },
+  async ({ linkId }) => {
+    const data = await jiraRequest(`/issueLink/${linkId}`);
+    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+  }
+);
+
+server.tool(
+  "delete_issue_link",
+  "Delete an issue link by ID",
+  { linkId: z.string() },
+  async ({ linkId }) => {
+    await jiraRequest(`/issueLink/${linkId}`, { method: "DELETE" });
+    return { content: [{ type: "text", text: `Issue link ${linkId} deleted.` }] };
+  }
+);
+
 // ── Start ──
 
 async function main() {

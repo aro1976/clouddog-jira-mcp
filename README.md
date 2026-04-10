@@ -24,19 +24,31 @@ npm run build
 
 ## Configuração no Kiro CLI
 
-Adicione ao `~/.kiro/settings.json`:
+Adicione ao `~/.kiro/settings/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "jira": {
       "command": "node",
-      "args": ["/Users/alessandro/Projects/CloudDog/clouddog-jira-mcp/dist/index.js"],
+      "args": ["/caminho/para/clouddog-jira-mcp/dist/index.js"],
       "env": {
         "JIRA_BASE_URL": "https://sua-empresa.atlassian.net",
         "JIRA_EMAIL": "seu-email@empresa.com",
         "JIRA_API_TOKEN": "seu-token"
-      }
+      },
+      "disabled": false,
+      "autoApprove": [
+        "list_projects",
+        "get_project",
+        "search_issues",
+        "get_issue",
+        "get_transitions",
+        "get_comments",
+        "get_worklogs",
+        "get_issue_link_types",
+        "get_issue_link"
+      ]
     }
   }
 }
@@ -44,34 +56,44 @@ Adicione ao `~/.kiro/settings.json`:
 
 ## Tools Disponíveis
 
+> ✅ = auto-approve habilitado por padrão
+
 ### Projects
-| Tool | Descrição |
-|---|---|
-| `list_projects` | Listar projetos |
-| `get_project` | Obter projeto por key/ID |
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `list_projects` | Listar projetos | ✅ |
+| `get_project` | Obter projeto por key/ID | ✅ |
 
 ### Issues
-| Tool | Descrição |
-|---|---|
-| `search_issues` | Buscar issues via JQL |
-| `get_issue` | Obter issue por key/ID |
-| `create_issue` | Criar nova issue |
-| `edit_issue` | Editar issue existente |
-| `delete_issue` | Deletar issue |
-| `assign_issue` | Atribuir issue a um usuário |
-| `get_transitions` | Listar transições disponíveis |
-| `transition_issue` | Mover issue para outro status |
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `search_issues` | Buscar issues via JQL | ✅ |
+| `get_issue` | Obter issue por key/ID | ✅ |
+| `create_issue` | Criar nova issue | |
+| `edit_issue` | Editar issue existente | |
+| `delete_issue` | Deletar issue | |
+| `assign_issue` | Atribuir issue a um usuário | |
+| `get_transitions` | Listar transições disponíveis | ✅ |
+| `transition_issue` | Mover issue para outro status | |
 
 ### Comments
-| Tool | Descrição |
-|---|---|
-| `get_comments` | Listar comentários de uma issue |
-| `add_comment` | Adicionar comentário |
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `get_comments` | Listar comentários de uma issue | ✅ |
+| `add_comment` | Adicionar comentário | |
 
 ### Worklogs
-| Tool | Descrição |
-|---|---|
-| `get_worklogs` | Listar worklogs de uma issue |
-| `add_worklog` | Lançar horas em uma issue |
-| `update_worklog` | Atualizar worklog existente |
-| `delete_worklog` | Deletar worklog |
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `get_worklogs` | Listar worklogs de uma issue | ✅ |
+| `add_worklog` | Lançar horas em uma issue | |
+| `update_worklog` | Atualizar worklog existente | |
+| `delete_worklog` | Deletar worklog | |
+
+### Issue Links
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `get_issue_link_types` | Listar tipos de link disponíveis (Blocks, Relates, etc.) | ✅ |
+| `link_issues` | Criar link entre duas issues | |
+| `get_issue_link` | Obter link pelo ID | ✅ |
+| `delete_issue_link` | Deletar link pelo ID | |
