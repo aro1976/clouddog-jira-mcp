@@ -185,7 +185,7 @@ server.tool(
   "Get available transitions for an issue",
   { issueIdOrKey: z.string() },
   async ({ issueIdOrKey }) => {
-    const data = await jiraRequest(`/issue/${issueIdOrKey}/transitions`);
+    const data = await jiraRequest(`/issue/${issueIdOrKey}/transitions?expand=transitions.fields`);
     return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
   }
 );
