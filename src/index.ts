@@ -340,6 +340,126 @@ server.tool(
   }
 );
 
+// ── Organizations ──
+
+server.tool(
+  "list_organizations",
+  "List all organizations in the Jira Service Management instance",
+  { start: z.number().optional(), limit: z.number().optional() },
+  async ({ start, limit }) => {
+    const params = new URLSearchParams();
+    if (start !== undefined) params.set("start", String(start));
+    if (limit !== undefined) params.set("limit", String(limit));
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization?${params}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text }] };
+  }
+);
+
+server.tool(
+  "get_organization",
+  "Get details of an organization by ID",
+  { organizationId: z.number() },
+  async ({ organizationId }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization/${organizationId}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text }] };
+  }
+);
+
+server.tool(
+  "create_organization",
+  "Create a new organization in Jira Service Management",
+  { name: z.string() },
+  async ({ name }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text }] };
+  }
+);
+
+server.tool(
+  "delete_organization",
+  "Delete an organization by ID",
+  { organizationId: z.number() },
+  async ({ organizationId }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization/${organizationId}`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text: `Organization ${organizationId} deleted.` }] };
+  }
+);
+
+server.tool(
+  "list_organization_users",
+  "List all users of an organization",
+  { organizationId: z.number(), start: z.number().optional(), limit: z.number().optional() },
+  async ({ organizationId, start, limit }) => {
+    const params = new URLSearchParams();
+    if (start !== undefined) params.set("start", String(start));
+    if (limit !== undefined) params.set("limit", String(limit));
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization/${organizationId}/user?${params}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json" },
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text }] };
+  }
+);
+
+server.tool(
+  "add_organization_users",
+  "Add users to an organization",
+  { organizationId: z.number(), accountIds: z.array(z.string()).describe("List of accountIds to add") },
+  async ({ organizationId, accountIds }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization/${organizationId}/user`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ accountIds }),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text: `Users added to organization ${organizationId}.` }] };
+  }
+);
+
+server.tool(
+  "remove_organization_users",
+  "Remove users from an organization",
+  { organizationId: z.number(), accountIds: z.array(z.string()).describe("List of accountIds to remove") },
+  async ({ organizationId, accountIds }) => {
+    const url = `${JIRA_BASE_URL}/rest/servicedeskapi/organization/${organizationId}/user`;
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: { Authorization: `Basic ${auth}`, Accept: "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify({ accountIds }),
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Jira API ${res.status}: ${text}`);
+    return { content: [{ type: "text", text: `Users removed from organization ${organizationId}.` }] };
+  }
+);
+
 // ── Service Desk Comments ──
 
 server.tool(

@@ -99,3 +99,14 @@ Adicione ao `~/.kiro/settings/mcp.json`:
 | `link_issues` | Criar link entre duas issues | |
 | `get_issue_link` | Obter link pelo ID | ✅ |
 | `delete_issue_link` | Deletar link pelo ID | |
+
+### Organizations
+| Tool | Descrição | Auto-approve |
+|---|---|---|
+| `list_organizations` | Listar todas as organizações do JSM | ✅ |
+| `get_organization` | Obter detalhes de uma organização pelo ID | ✅ |
+| `create_organization` | Criar nova organização | |
+| `delete_organization` | Deletar organização pelo ID | |
+| `list_organization_users` | Listar usuários de uma organização | ✅ |
+| `add_organization_users` | Adicionar usuários a uma organização | |
+| `remove_organization_users` | Remover usuários de uma organização | |
